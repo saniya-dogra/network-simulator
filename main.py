@@ -55,12 +55,12 @@ else:
 print("\n========== TEST 2: HUB ==========")
 
 hub = Hub("Hub1")
-devices = [EndDevice(f"D{i}") for i in range(5)]
+devices = [EndDevice(f"D{i}") for i in range(5)]           #creates D0, D1, D2, D3, D4
 
 for d in devices:
-    hub.connect(d)
+    hub.connect(d)                                         #all devices connected to hub
 
-packet = Packet("D0", "D3", "Hello via Hub")
+packet = Packet("D0", "D3", "Hello via Hub")               #D0 sends message to D3
 devices[0].send(packet)
 
 
