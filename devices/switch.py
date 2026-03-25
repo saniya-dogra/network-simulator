@@ -6,7 +6,14 @@ class Switch:
 
     def connect(self, device):              #connect devices Like plugging cable into switch
         self.devices.append(device)
-        device.switch = self
+        if hasattr(device, "switch"):
+            device.switch = self
+
+    def _deliver(self, node, packet):
+        try:
+            node.receive(packet, None)
+        except TypeError:
+            node.receive(packet)
 
     def receive(self, packet, sender):
         print(f"\n{self.name} received {packet}")         #Switch gets data
@@ -22,9 +29,10 @@ class Switch:
         if packet.dest in self.mac_table:     #destination known : Sends ONLY to correct device
             print("Forwarding to specific device")
             target = self.mac_table[packet.dest]
-            target.receive(packet)
+            if target != sender:
+                self._deliver(target, packet)
         else:
             print("Broadcasting (unknown MAC)")
             for d in self.devices:               #unknown destination : Sends to ALL devices
                 if d != sender:
-                    d.receive(packet)
+                    self._deliver(d, packet)

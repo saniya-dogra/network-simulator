@@ -95,17 +95,27 @@ class NetworkUI:
         self.log(f"Original Data: {packet.data}")
         self.log(f"Binary: {binary}")
         self.log(f"After Noise: {noisy_data}")
+        self.log("Hub behavior: frame is repeated on every other port")
 
-        # animation
+        # animation: sender -> hub
         sx, sy = positions[0]
-        dx, dy = positions[3]
-
         self.animate_packet(sx+20, sy+20, 370, 220)
-        self.animate_packet(370, 220, dx+20, dy+20)
+
+        # animation: hub -> every receiver except sender (true hub broadcast)
+        for i, (x, y) in enumerate(positions):
+            if i == 0:
+                continue
+            self.animate_packet(370, 220, x+20, y+20)
+
+            receiver = devices[i].name
+            if receiver == packet.dest:
+                self.log(f"{receiver}: accepted frame")
+            else:
+                self.log(f"{receiver}: discarded frame (not destination)")
 
         devices[0].send(packet)
 
-        self.log("Delivered to D3\n")
+        self.log("D3 receives data after hub broadcast\n")
 
     # =========================
     # SWITCH TEST (UPDATED)
