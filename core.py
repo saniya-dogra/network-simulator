@@ -30,7 +30,7 @@ class Device:
             other_device.ports.append(self)
             print(f"[LINK] {self.name} <-> {other_device.name} connected")
 
-class SimulatorCore:
+class SimulatorCore:                  # simulator core: network manager
     def __init__(self):
         self.all_devices = {}
 

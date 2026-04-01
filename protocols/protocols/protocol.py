@@ -50,7 +50,7 @@ class GoBackN:
                 elif hasattr(receiver, 'broadcast'):
                     receiver.broadcast(sender, frame, self.dll)
                 else:
-                    self.phy.transmit(sender, receiver, frame)
+                   self.phy.transmit(sender, receiver, frame, self.dll)
                 next_seq += 1
 
             # Simulation of waiting for actual ACKs
