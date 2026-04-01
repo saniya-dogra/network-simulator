@@ -5,11 +5,11 @@ from protocols.protocols.protocol import CSMACD, GoBackN, ChecksumProtocol
 
 
 def parse_list(value):
-    return [item.strip() for item in value.split(",") if item.strip()]
+    return [item.strip() for item in value.split(",") if item.strip()]      # used in topology parsing "A,B,C" → ["A", "B", "C"]
 
 
-def build_topology(sim, spec):
-    """
+def build_topology(sim, spec):                    # network creation
+    """  
     New CLI format:
     p2p:A-B
     star:Hub1>A,B,C
@@ -92,8 +92,8 @@ def build_topology(sim, spec):
 
 def parse_transmission(spec):
     """
-    New message format:
-    Sender->Receiver:Message text
+    New message format: 
+    Sender->Receiver:Message text                         # A->B:Hello
     """
     if "->" not in spec or ":" not in spec:
         raise ValueError("Transmission format must be Sender->Receiver:Message")
