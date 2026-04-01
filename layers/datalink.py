@@ -16,9 +16,9 @@ class DataLinkLayer:
         self.flow_control_protocol = protocol
 
     def send(self, sender, receiver, message):
-        print(f"\n[Data Link Layer] Preparing to send: '{message}'")
+        print(f"\n[L2/TX] start: {sender.name} -> {receiver.name} | text='{message}' | chars={len(message)}")
         frames = []
-        for char in message:
+        for idx, char in enumerate(message):
             f = Frame(sender.mac_address, receiver.mac_address, char)
             f.is_ack = False
             # Skipping error_detection for ACKs
@@ -26,7 +26,7 @@ class DataLinkLayer:
             self.add_error_detection(f)
             f.payload = f"{f.payload}|{f.error_code}"
 
-            print(f"Frame Payload: {f.payload}")
+            print(f"[L2/TX] frame-{idx}: data='{char}' checksum={f.error_code}")
 
             frames.append(f)
 
@@ -50,13 +50,13 @@ class DataLinkLayer:
             self.sent_frames += 1
 
     def receive(self, receiver, frame):
-        print(f"\n[Data Link Layer] {receiver.name} received a frame.")
+        print(f"\n[L2/RX] frame arrived at {receiver.name}")
 
         self.mac_table[frame.source_mac] = receiver
 
         if not frame.is_ack:
             if "|" not in frame.payload:
-                print("[Data Link Layer] Invalid frame format.")
+                print("[L2/RX] invalid frame format; drop")
                 return
 
             data, recv_checksum = frame.payload.split("|")
@@ -65,19 +65,19 @@ class DataLinkLayer:
             calculated = sum(ord(c) for c in data) % 256
 
             if calculated == recv_checksum:
-                print("[Data Link Layer] No error detected.")
+                print("[L2/RX] checksum ok")
                 frame.payload = data   # restore original
             else:
-                print("[Data Link Layer] Error detected! Frame discarded.")
+                print("[L2/RX] checksum mismatch; frame dropped")
                 return
 
         # ADDRESS LEARNING TRIGGER
         if not frame.is_ack:
-            print(f"[Data Link Layer] {receiver.name} sending actual ACK frame for Seq {frame.seq_num}")
+            print(f"[L2/RX] {receiver.name} -> ACK(seq={frame.seq_num})")
             # Sending back ACK frames for Switch to learn MAC address of receiver.
             self.send_ack(receiver, frame.source_mac, frame.seq_num)
         else:
-            print(f"[Data Link Layer] ACK {frame.seq_num} received successfully.")
+            print(f"[L2/RX] ACK(seq={frame.seq_num}) accepted")
 
         self.received_frames += 1
 
@@ -91,7 +91,7 @@ class DataLinkLayer:
     def send_ack(self, sender, receiver_mac, seq_num):
     # sender: Device sending ACK
     # receiver_mac: Device who should recevive ACK (Original Sender)
-        print(f"\n[Data Link Layer] {sender.name} is sending ACK for Seq {seq_num}")
+        print(f"\n[L2/ACK] {sender.name} sending ACK(seq={seq_num})")
     
     # 1. Make ACK frames(Source = sender, Dest = original sender's MAC)
         ack_frame = Frame(sender.mac_address, receiver_mac, "ACK")
@@ -113,11 +113,10 @@ class DataLinkLayer:
             if receiver_device:
                 self.physical_layer.transmit(sender, receiver_device, ack_frame, self)
             else:
-                print("[Data Link Layer] ERROR: Receiver device not found for ACK!")
+                print("[L2/ACK] receiver for ACK not found")
 
     def stats(self):
         print("\n--- Data Link Layer Stats ---")
         print(f"Frames Sent: {self.sent_frames}")
         print(f"Frames Received: {self.received_frames}")
-
-
+        
