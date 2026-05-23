@@ -1,4 +1,7 @@
 from physical_layer.end_device import EndDevice
+from physical_layer.hub import Hub
+from physical_layer.topology import connect
+
 from datalink_layer.switch import Switch
 from datalink_layer.bridge import Bridge
 from datalink_layer.frame import Frame
@@ -73,6 +76,124 @@ def datalink_demo():
 
     print("\n--------------------------------")
 
-    print("\nBroadcast Domains = 1")
+    print("\nTEST 6 : Single Switch Statistics")
+
+    print("Broadcast Domains = 1")
 
     print("Collision Domains = 5")
+
+    print("\n--------------------------------")
+
+    print("\nTEST 7 : Two Star Topologies Connected Using Switch")
+
+    # CREATE MAIN SWITCH
+
+    core_switch = Switch("CoreSwitch")
+
+    # CREATE HUBS
+
+    hub1 = Hub("Hub1")
+    hub2 = Hub("Hub2")
+
+    # CREATE DEVICE LISTS
+
+    devices_hub1 = []
+    devices_hub2 = []
+
+    # CREATE 5 DEVICES FOR HUB1
+
+    for i in range(1, 6):
+
+        device = EndDevice(
+            f"H1_PC{i}",
+            f"H1_MAC{i}"
+        )
+
+        devices_hub1.append(device)
+
+        connect(device, hub1)
+
+    # CREATE 5 DEVICES FOR HUB2
+
+    for i in range(1, 6):
+
+        device = EndDevice(
+            f"H2_PC{i}",
+            f"H2_MAC{i}"
+        )
+
+        devices_hub2.append(device)
+
+        connect(device, hub2)
+
+    # HUB CONNECTOR CLASS
+
+    class HubConnector:
+
+        def __init__(self, name, mac):
+
+            self.name = name
+            self.mac = mac
+
+        def receive_data(self, data):
+
+            print(f"{self.name} received data: {data}")
+
+    # CREATE CONNECTORS
+
+    hub1_connector = HubConnector(
+        "Hub1_Connector",
+        "HUB1"
+    )
+
+    hub2_connector = HubConnector(
+        "Hub2_Connector",
+        "HUB2"
+    )
+
+    # CONNECT HUBS TO SWITCH
+
+    core_switch.connect_device(hub1_connector)
+    core_switch.connect_device(hub2_connector)
+
+    print("\nNetwork Topology")
+
+    print("""
+            H1_PC1  H1_PC2  H1_PC3  H1_PC4  H1_PC5
+                 \      |      |      |      /
+                          Hub1
+                            |
+                      CoreSwitch
+                            |
+                          Hub2
+                 /      |      |      |      \\
+            H2_PC1  H2_PC2  H2_PC3  H2_PC4  H2_PC5
+    """)
+
+    print("\nCommunication Inside Hub1")
+
+    devices_hub1[0].send_data(
+        "Hello from Hub1"
+    )
+
+    print("\nCommunication Inside Hub2")
+
+    devices_hub2[0].send_data(
+        "Hello from Hub2"
+    )
+
+    print("\nCommunication Across Switch")
+
+    core_switch.send_frame(
+        hub1_connector,
+        "HUB2",
+        "Message from Hub1 Network to Hub2 Network"
+    )
+
+    print("\nFinal Network Statistics")
+
+    print("Broadcast Domains = 1")
+
+    print("Collision Domains = 3")
+
+    print("\nAll 10 Devices Successfully Connected")
