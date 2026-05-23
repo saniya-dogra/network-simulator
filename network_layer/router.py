@@ -12,6 +12,20 @@ class Router:
 
         self.prefix_matcher = LongestPrefixMatching()
 
+        self.interfaces = []
+
+    def add_interface(self, interface):
+
+        self.interfaces.append(interface)
+
+    def show_interfaces(self):
+
+        print("\nROUTER INTERFACES")
+
+        for interface in self.interfaces:
+
+            interface.show()
+
     def add_route(self, network, mask, next_hop):
 
         self.routing_table.add_route(
