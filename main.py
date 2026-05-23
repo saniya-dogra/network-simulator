@@ -9,7 +9,7 @@ print("\n========== DATA LINK LAYER ==========")
 datalink_demo()
 
 
-print("\n========== NETWORK LAYER ==========")
+
 network_demo()
 
 
