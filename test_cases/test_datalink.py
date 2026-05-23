@@ -158,7 +158,7 @@ def datalink_demo():
 
     print("\nNetwork Topology")
 
-    print("""
+    print(r"""
             H1_PC1  H1_PC2  H1_PC3  H1_PC4  H1_PC5
                  \      |      |      |      /
                           Hub1
