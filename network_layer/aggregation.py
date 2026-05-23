@@ -1,9 +1,26 @@
+import ipaddress
+
 class AddressAggregation:
 
-    def summarize(self):
+    def summarize(self, networks=None):
 
-        print("\nAddress Aggregation Enabled")
+        if networks is None:
+            networks = ["192.168.1.0/24", "192.168.2.0/24"]
 
-        print("192.168.1.0/24 + 192.168.2.0/24")
+        print("\nAddress Aggregation")
 
-        print("Summarized to 192.168.0.0/16")
+        net_objects = [ipaddress.IPv4Network(n, strict=False) for n in networks]
+
+        for net in net_objects:
+            print(f"  Network : {net}")
+
+        supernet = ipaddress.collapse_addresses(net_objects)
+        collapsed = list(supernet)
+
+        if len(collapsed) == 1:
+            print(f"  Summarized to : {collapsed[0]}")
+
+        else:
+            print(f"  Cannot summarize to single block. Collapsed:")
+            for net in collapsed:
+                print(f"    {net}")
