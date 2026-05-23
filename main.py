@@ -1,6 +1,9 @@
 from test_cases.test_physical import physical_layer_demo
 from test_cases.test_datalink import datalink_demo
 from test_cases.test_network import network_demo
+from test_cases.test_transport_application import (
+    transport_application_demo
+)
 
 print("\n========== PHYSICAL LAYER ==========")
 physical_layer_demo()
@@ -11,5 +14,8 @@ datalink_demo()
 
 
 network_demo()
+
+
+transport_application_demo()
 
 
