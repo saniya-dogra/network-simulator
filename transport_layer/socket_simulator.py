@@ -14,12 +14,12 @@ class SocketSimulator:
 
     def listen(self):
         if self.bound_port is None:
-            print("Error: Socket not bound to any port")
+            print("Error: Socket not bound to any port")        #incoming connection request
             return
         print(f"Socket Listening on Port {self.bound_port} ...")
 
     def accept(self, client_name):
-        print(f"Connection Accepted from {client_name}")
+        print(f"Connection Accepted from {client_name}")         #Blocks until client connects,creates new socket
         self.is_connected = True
 
     def send(self, data):

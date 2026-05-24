@@ -2,7 +2,7 @@ class CongestionControl:
 
     def simulate(self):
 
-        print("\nCONGESTION CONTROL")
+        print("\nCONGESTION CONTROL")      # congestion control prevents the sender from overwhelming the network.(slowdown)
 
         print("Slow Start Phase")
 
