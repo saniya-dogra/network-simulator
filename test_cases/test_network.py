@@ -168,6 +168,10 @@ def network_demo():
 
     rip = RIPProtocol()
 
+    rip.add_route("192.168.1.0", 1)
+    rip.add_route("192.168.2.0", 2)
+    rip.add_route("10.0.0.0", 3)
+
     rip.start()
 
     # ------------------------------------------------
